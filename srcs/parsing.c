@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../includes/so_long.h"
-#include "./libft/libft.h"
 
 static void	check_acces(char **map)
 {
@@ -40,10 +39,6 @@ static void	check_acces(char **map)
 	big_big_free(dup);
 }
 
-/*
-x: start height
-y: start lenght
-*/
 static void	elements_check(char **map, int x, int y)
 {
 	int	map_e[4];
@@ -76,6 +71,8 @@ static char	**get_map(char *file_name)
 	char	*raw_map;
 
 	fd = open(file_name, O_RDONLY);
+	if (fd < 0)
+		put_err("Cannot open map file", NULL);
 	line = get_next_line(fd);
 	if (!line)
 	{
@@ -93,30 +90,31 @@ static char	**get_map(char *file_name)
 
 static void	border_check(char **map)
 {
-	int	i;
-	int	j;
-	int	err;
+	int		i;
+	int		j;
+	size_t	first_len;
 
-	err = 0;
+	if (!map || !map[0])
+		put_err("Empty map", NULL);
+	first_len = ft_strlen(map[0]);
 	i = -1;
 	while (map[++i])
 	{
-		if (i == 0 || !map[i + 1])
+		if (ft_strlen(map[i]) != first_len)
 		{
-			j = 0;
-			while (map[i][j])
-				if (map[i][j++] != '1' || j >= 40 || i >= 22)
-					err = 1;
+			big_big_free(map);
+			put_err("Map is not rectangular", NULL);
 		}
-		else
-			if (map[i][0] != '1' || map[i][ft_strlen(map[i]) - 1] != '1' ||
-				ft_strlen(map[i]) != ft_strlen(map[i - 1]))
-				err = 1;
-	}
-	if (err || ft_strlen(map[i - 1]) != ft_strlen(map[i - 2]))
-	{
-		big_big_free(map);
-		put_err("Wrong border/map too large/incorrect line sizes", NULL);
+		j = -1;
+		while (map[i][++j])
+		{
+			if ((i == 0 || !map[i + 1] || j == 0 || !map[i][j + 1])
+				&& map[i][j] != '1')
+			{
+				big_big_free(map);
+				put_err("Map is not surrounded by walls", NULL);
+			}
+		}
 	}
 }
 
@@ -126,7 +124,7 @@ char	**get_and_parse(char *file_name)
 
 	map = NULL;
 	if (ft_strrchr(file_name, '.') && \
-	ft_strncmp(ft_strrchr(file_name, '.'), ".ber", 5) == 0)
+		ft_strncmp(ft_strrchr(file_name, '.'), ".ber", 5) == 0)
 	{
 		map = get_map(file_name);
 		border_check(map);
@@ -134,6 +132,6 @@ char	**get_and_parse(char *file_name)
 		check_acces(map);
 	}
 	else
-		put_err("Invalid map name", NULL);
+		put_err("Invalid map name (must be .ber)", NULL);
 	return (map);
 }

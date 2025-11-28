@@ -1,38 +1,43 @@
 NAME = so_long
 
-SRCS =	srcs/main.c
+SRCS =	main.c \
+		parsing.c \
+		parsing_utils.c \
+		parsing_utils2.c \
+		utilis.c \
+		free.c \
+		render.c \
+		movement.c
 
 OBJS = $(SRCS:.c=.o)
-MLX = ./minilibx-linux/libmlx.a
-LIBFT = ./srcs/libft/libft.a
+MLX = ../minilibx-linux/libmlx.a
+LIBFT = libft/libft.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -I/usr/include -Iminilibx-linux
-LDFLAGS = -Lmlx_linux -L/usr/lib -lXext -lX11 -lm -lz
+CFLAGS = -Wall -Wextra -Werror -g -I../includes -I../minilibx-linux -Ilibft
+LDFLAGS = -L../minilibx-linux -lmlx -L/usr/lib -lXext -lX11 -lm -lz
 
 all: $(NAME)
 
-$(NAME): $(OBJS) $(MLX) $(LIBFT)
-	$(CC) $(OBJS) $(MLX) $(LIBFT) $(LDFLAGS) -o $(NAME)
+$(NAME): $(LIBFT) $(MLX) $(OBJS)
+	$(CC) $(OBJS) $(LIBFT) $(MLX) $(LDFLAGS) -o $(NAME)
 
 $(MLX):
-	make -C ./minilibx-linux
+	make -C ../minilibx-linux
 
 $(LIBFT):
-	make -C ./srcs/libft
+	make -C libft
 
-%.o: %.c
+%.o: %.c ../includes/so_long.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	$RM() $(OBJS)
-	make clean -C ./minilibx-linux
-	make clean -C ./srcs/libft
+	rm -f $(OBJS)
+	make clean -C libft
 
 fclean: clean
-	$(RM) $(NAME)
-	make clean -C ./minilibx-linux
-	make fclean -C ./srcs/libft
+	rm -f $(NAME)
+	make fclean -C libft
 
 re: fclean all
 

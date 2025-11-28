@@ -10,90 +10,84 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <mlx.h>
-#include "./libft/includes/libft.h"
+#include "../includes/so_long.h"
 
-#define ESC 65307 // C'est le keycode d'ECHAP / ESC. Important pour quitter le programme avec ce dernier.
-#define NAME "\112\157\151\156\040\124\150\145\040\120\
-\171\164\150\157\156\040\123\151\144\145\041"
-
-typedef struct s_img
+static int	input(int key, t_data *data)
 {
-	int		w; // width
-	int		h; // height
-	char	*path; // Ici le path de l'image en .xpm (rien d'autre)
-	void	*img; // Ce qui va stocker l'adresse de l'image par la mlx
-}	t_img;
-
-typedef struct s_data
-{
-	void	*mlx; // Le pointeur de la mlx
-	void	*win; // Le pointeur de la fenêtre
-	t_img	*sprite; // Ici d'est la structure d'une image avec le moins de données possibles.
-}	t_data;
-
-int	kill_prog(t_data *data)
-{
-	if (data->sprite) // Si un sprite à été créé, on destroy l'image (leaks) et on free son pointeur
-	{
-		mlx_destroy_image(data->mlx, data->sprite->img); // Important pour les leaks
-		free(data->sprite);
-	}
-	if (data->win) // Si une fenêtre à été créé, on free
-	{
-		mlx_destroy_window(data->mlx, data->win); // Détruit la fenêtre (leaks)
-		mlx_destroy_display(data->mlx); // Détruit le contenu du pointeur de la mlx
-	}
-	if (data->mlx)
-		free(data->mlx); // free le pointeur de la mlx
-	free(data);
-	exit (0); // Quitte le programme. Ici il va falloir mettre une variable pour savoir
-	// s'il y a eu une erreur ou non, donc 0 sans erreur, 1 si erreur.
-	// Vous pouvez vous faire chier à faire un code d'erreur par erreur.
-	// Pensez à rajouter un print en cas d'erreur pour dire ce qu'il s'est passé.
-}
-
-int	input(int key, t_data *data)
-{
-	if (key == ESC) // key est envoyé par le key_hook, et on compare key à la touche souhaitée, ici ESC
+	if (key == ESC)
 		kill_prog(data);
-	return (1);
+	else if (key == KEY_W || key == KEY_UP)
+		move_player(data, -1, 0);
+	else if (key == KEY_S || key == KEY_DOWN)
+		move_player(data, 1, 0);
+	else if (key == KEY_A || key == KEY_LEFT)
+		move_player(data, 0, -1);
+	else if (key == KEY_D || key == KEY_RIGHT)
+		move_player(data, 0, 1);
+	return (0);
 }
 
-int	main(void)
+static t_data	*init_data(void)
 {
 	t_data	*data;
 
 	data = ft_calloc(sizeof(t_data), 1);
-	data->sprite = NULL; // Définition à NULL, important pour le free
-	data->mlx = NULL; // Définition à NULL, important pour le free
-	data->win = NULL; // Définition à NULL, important pour le free
-	data->mlx = mlx_init(); // Fonction pour créer le pointeur de la mlx qui permet tous le reste
+	if (!data)
+		return (NULL);
+	data->mlx = NULL;
+	data->win = NULL;
+	data->map = NULL;
+	data->player = NULL;
+	return (data);
+}
+
+static void	init_map_data(t_data *data, char **map)
+{
+	data->map = ft_calloc(sizeof(t_map), 1);
+	if (!data->map)
+		put_err("Malloc error", data);
+	data->map->map = map;
+	data->map->width = map_width(map);
+	data->map->height = map_height(map);
+	find_firstof(map, 'P', data->map->spawn);
+	find_firstof(map, 'E', data->map->p_exit);
+	data->map->collnb = number_of(map, 'C');
+	data->player = ft_calloc(sizeof(t_player), 1);
+	if (!data->player)
+		put_err("Malloc error", data);
+	data->player->pos[0] = data->map->spawn[0];
+	data->player->pos[1] = data->map->spawn[1];
+	data->player->coins = 0;
+	data->player->move_nbr = 0;
+	data->player->dir = RIGHT;
+}
+
+int	main(int argc, char **argv)
+{
+	t_data	*data;
+	char	**map;
+
+	if (argc != 2)
+		put_err("Usage: ./so_long <map.ber>", NULL);
+	data = init_data();
+	if (!data)
+		put_err("Malloc error", NULL);
+	map = get_and_parse(argv[1]);
+	if (!map)
+		put_err("Invalid map", data);
+	init_map_data(data, map);
+	data->mlx = mlx_init();
 	if (!data->mlx)
-		return (1);
-
-	data->win = mlx_new_window(data->mlx, 256, 256, NAME); // Crée la fenêtre et la stocke dans la structure.
-	// On donne le pointeur de la mlx, ses dimensions, et le nom de la fenêtre.
-
-	data->sprite = ft_calloc(sizeof(t_img), 1);
-	data->sprite->path = "./sprites/help.xpm"; // Le path est en brut, pas besoin de le prendre autrement
-	data->sprite->img = mlx_xpm_file_to_image(\
-		data->mlx, "./sprites/help.xpm", &data->sprite->w, &data->sprite->w); // Cette LONGUE fonction va convertir une image en .xpm
-		// vers un format utilisable par la mlx. On donne le pointeur de la mlx, et l'adresse des INTs de sa taille pour qu'il la stocke.
-
-	mlx_put_image_to_window(data->mlx, data->win, data->sprite->img, 64, 64); // Cette fonction va afficher une image.
-	// On donne la mlx, la fenêtre, l'image créé par la fonction précédente, et ses coordonnées en partant d'en haut à gauche.
-
-	mlx_key_hook(data->win, &input, data); // Key hook c'est le hook qui va permettre la reconnaissance des keys donc du clavier/souris.
-	// input c'est la fonction plus haut qui termine le programme
-
-	mlx_hook(data->win, 17, 1L << 17, &kill_prog, data); // Ici, 17 correspond à DestroyNotify, c'est l'action à faire
-	// Et 1L << 17 correspond à StructureNotifyMask qui est la croix en haut à droite
-	// kill_prog est ce qui va être exécuté si la croix est cliquée
-
-	mlx_loop(data->mlx); // C'est le hook de base, celui qui va permettre de loop dans tous les hooks précédents
+		put_err("MLX init failed", data);
+	data->win = mlx_new_window(data->mlx, data->map->width * TILE_SIZE,
+			data->map->height * TILE_SIZE, NAME);
+	if (!data->win)
+		put_err("Window creation failed", data);
+	load_sprites(data);
+	render_map(data);
+	ft_printf("Map loaded: %dx%d\n", data->map->width, data->map->height);
+	mlx_key_hook(data->win, &input, data);
+	mlx_hook(data->win, 17, 1L << 17, &kill_prog, data);
+	mlx_loop(data->mlx);
+	return (0);
 }

@@ -10,11 +10,31 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/so_long.h"
+
+void	big_big_free(char **map)
+{
+	int	i;
+
+	if (map)
+	{
+		i = 0;
+		while (map[i])
+		{
+			free(map[i]);
+			i++;
+		}
+		free(map);
+	}
+}
+
 void	put_err(char *err_mess, t_data *data)
 {
-	ft_printf("Error\n");
-	free_all(data);
-	ft_printf("%s\n", err_mess);
+	ft_putstr_fd("Error\n", 2);
+	ft_putstr_fd(err_mess, 2);
+	ft_putstr_fd("\n", 2);
+	if (data)
+		free_all(data);
 	exit(1);
 }
 

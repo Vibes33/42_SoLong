@@ -10,36 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <mlx.h>
-#include "./libft/libft.h"
 #include "../includes/so_long.h"
-
-void	big_big_free(char **map)
-{
-	int	i;
-
-	if (map)
-	{
-		i = 0;
-		while (map[i])
-		{
-			free(map[i]);
-			i++;
-		}
-		free(map);
-	}
-}
 
 static void	free_image(void *mlx, t_img *img)
 {
-	if (img->img)
-		mlx_destroy_image(mlx, img->img);
-	free(img);
+	if (img)
+	{
+		if (img->img && mlx)
+			mlx_destroy_image(mlx, img->img);
+		free(img);
+	}
 }
 
 static void	free_map(t_data *data)
 {
+	if (!data->map)
+		return ;
 	if (data->map->wall)
 		free_image(data->mlx, data->map->wall);
 	if (data->map->floor)
@@ -55,29 +41,38 @@ static void	free_map(t_data *data)
 	free(data->map);
 }
 
-void	free_all(t_data	*data)
+static void	free_player(t_data *data)
 {
-	int	i;
+	if (!data->player)
+		return ;
+	if (data->player->sprite_r)
+		free_image(data->mlx, data->player->sprite_r);
+	if (data->player->sprite_l)
+		free_image(data->mlx, data->player->sprite_l);
+	free(data->player);
+}
 
-	if (data)
+void	free_all(t_data *data)
+{
+	if (!data)
+		return ;
+	if (data->player)
+		free_player(data);
+	if (data->map)
+		free_map(data);
+	if (data->win)
 	{
-		if (data->map)
-			free_map(data);
-		if (data->player)
-		{
-			i = -1;
-			while (data->player->sprites[++i])
-				free_image(data->mlx, data->player->sprites[i]);
-			free(data->player->sprites);
-			free(data->player);
-		}
-		if (data->win)
-		{
-			mlx_destroy_window(data->mlx, data->win);
-			mlx_destroy_display(data->mlx);
-		}
-		if (data->mlx)
-			free(data->mlx);
-		free(data);
+		mlx_destroy_window(data->mlx, data->win);
+		mlx_destroy_display(data->mlx);
 	}
+	if (data->mlx)
+		free(data->mlx);
+	free(data);
+}
+
+int	kill_prog(t_data *data)
+{
+	free_all(data);
+	exit(0);
+	return (0);
 }
