@@ -11,9 +11,9 @@
 /* ************************************************************************** */
 
 #ifndef SO_LONG_H
-#define SO_LONG_H
+# define SO_LONG_H
 
-# include "../srcs/libft/libft.h"
+# include "../srcs/Libft/libft.h"
 # include "../minilibx-linux/mlx.h"
 
 /*
@@ -33,20 +33,8 @@
 # define KEY_DOWN 65364
 # define KEY_LEFT 65361
 # define KEY_RIGHT 65363
-
-/*
-** Game window name
-*/
 # define NAME "Soooooooooooooooooooooooooooooooooooooooooooo long"
-
-/*
-** Tile size in pixels (48x48)
-*/
 # define TILE_SIZE 48
-
-/*
-** Sprite paths
-*/
 # define SPRITE_FLOOR "../sprites/grass.xpm"
 # define SPRITE_WALL "../sprites/obstacle.xpm"
 # define SPRITE_COLL "../sprites/collect.xpm"
@@ -62,7 +50,7 @@
 ** LEFT  (2) : Player facing left
 ** RIGHT (3) : Player facing right
 */
-enum direction
+enum e_direction
 {
 	DOWN,
 	UP,
@@ -162,7 +150,6 @@ int		data_init(t_data **data, char *file_name);
 ** get_and_parse - Main parsing function, reads and validates the map
 ** @file_name : Path to the .ber map file
 ** @return    : 2D array of map on success, NULL on failure
-**
 ** Validates:
 ** - File extension (.ber)
 ** - Map is rectangular
@@ -199,10 +186,17 @@ char	**clone_map(char **map);
 ** @map : Map to flood fill (modified in place)
 ** @x   : Starting X coordinate
 ** @y   : Starting Y coordinate
-**
-** Used to verify that all collectibles and exit are reachable from spawn
 */
 void	flood_fill(char **map, int x, int y);
+
+/*
+** is_border_tile - Checks if a tile is on the border of the map
+** @map : 2D map array
+** @i   : Row index
+** @j   : Column index
+** @return : 1 if border, 0 otherwise
+*/
+int		is_border_tile(char **map, int i, int j);
 
 /*
 ** find_firstof - Finds first occurrence of a character in map
@@ -239,7 +233,6 @@ int		number_of(char **map, char c);
 ** @data : Main data structure
 ** @x    : X direction delta (-1, 0, or 1)
 ** @y    : Y direction delta (-1, 0, or 1)
-**
 ** Updates player position, handles collectible pickup,
 ** checks win condition, and increments move counter
 */
@@ -257,7 +250,6 @@ void	display_map_elem(t_data *data, int i, int j, int player);
 /*
 ** free_all - Frees all allocated memory in data structure
 ** @data : Main data structure to free
-**
 ** Frees map, player, images, MLX resources
 */
 void	free_all(t_data *data);
@@ -272,7 +264,6 @@ void	big_big_free(char **map);
 ** kill_prog - Clean exit handler for the game
 ** @data   : Main data structure
 ** @return : 0 (used as MLX hook return value)
-**
 ** Called on window close or ESC key, frees everything and exits
 */
 int		kill_prog(t_data *data);
@@ -281,7 +272,6 @@ int		kill_prog(t_data *data);
 ** put_err - Prints error message and exits program
 ** @err_mess : Error message to display
 ** @data     : Data structure to free (can be NULL)
-**
 ** Prints "Error\n" followed by the message to stderr
 ** Frees data if not NULL, then exits with status 1
 */
@@ -290,7 +280,6 @@ void	put_err(char *err_mess, t_data *data);
 /*
 ** load_sprites - Loads all XPM sprites into memory
 ** @data : Main data structure
-**
 ** Loads floor, wall, collectible, exit and player sprites
 ** Exits with error if any sprite fails to load
 */
@@ -299,7 +288,6 @@ void	load_sprites(t_data *data);
 /*
 ** render_map - Renders the entire map to the window
 ** @data : Main data structure
-**
 ** Draws all tiles including floor, walls, collectibles,
 ** exit, and player at their respective positions
 */
@@ -310,7 +298,6 @@ void	render_map(t_data *data);
 ** @data : Main data structure
 ** @dy   : Y direction delta (-1 up, 0 none, 1 down)
 ** @dx   : X direction delta (-1 left, 0 none, 1 right)
-**
 ** Checks for walls, collects items, updates position and re-renders
 */
 void	move_player(t_data *data, int dy, int dx);

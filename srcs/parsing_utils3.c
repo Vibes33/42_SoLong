@@ -1,39 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utilis.c                                           :+:      :+:    :+:   */
+/*   parsing_utils3.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rydelepi <rydelepi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/28 16:01:33 by rydelepi          #+#    #+#             */
-/*   Updated: 2025/11/28 21:34:32 by rydelepi         ###   ########.fr       */
+/*   Created: 2025/11/28 21:35:00 by rydelepi          #+#    #+#             */
+/*   Updated: 2025/11/29 00:36:50 by rydelepi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/so_long.h"
 
-void	big_big_free(char **map)
+int	is_border_tile(char **map, int i, int j)
 {
-	int	i;
-
-	if (map)
-	{
-		i = 0;
-		while (map[i])
-		{
-			free(map[i]);
-			i++;
-		}
-		free(map);
-	}
+	return (i == 0 || !map[i + 1] || j == 0 || !map[i][j + 1]);
 }
 
-void	put_err(char *err_mess, t_data *data)
+void	flood_fill(char **map, int x, int y)
 {
-	ft_putstr_fd("Error\n", 2);
-	ft_putstr_fd(err_mess, 2);
-	ft_putstr_fd("\n", 2);
-	if (data)
-		free_all(data);
-	exit(1);
+	if (x < 0 || y < 0 || !map[x] || !map[x][y])
+		return ;
+	if (map[x][y] == '1' || map[x][y] == 'F')
+		return ;
+	map[x][y] = 'F';
+	flood_fill(map, x + 1, y);
+	flood_fill(map, x - 1, y);
+	flood_fill(map, x, y + 1);
+	flood_fill(map, x, y - 1);
 }

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rydelepi <rydelepi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/28 16:00:00 by rydelepi          #+#    #+#             */
-/*   Updated: 2025/11/28 16:00:00 by rydelepi         ###   ########.fr       */
+/*   Created: 2025/11/29 00:38:07 by rydelepi          #+#    #+#             */
+/*   Updated: 2025/11/29 00:38:07 by rydelepi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,17 +105,4 @@ void	find_firstof(char **map, char to_find, int *pos)
 		}
 		i++;
 	}
-}
-
-void	flood_fill(char **map, int x, int y)
-{
-	if (x < 0 || y < 0 || !map[x] || !map[x][y])
-		return ;
-	if (map[x][y] == '1' || map[x][y] == 'F')
-		return ;
-	map[x][y] = 'F';
-	flood_fill(map, x + 1, y);
-	flood_fill(map, x - 1, y);
-	flood_fill(map, x, y + 1);
-	flood_fill(map, x, y - 1);
 }

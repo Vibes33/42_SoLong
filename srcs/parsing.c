@@ -6,7 +6,7 @@
 /*   By: rydelepi <rydelepi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 16:00:04 by rydelepi          #+#    #+#             */
-/*   Updated: 2025/11/28 16:00:06 by rydelepi         ###   ########.fr       */
+/*   Updated: 2025/11/28 21:47:30 by rydelepi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,8 +108,7 @@ static void	border_check(char **map)
 		j = -1;
 		while (map[i][++j])
 		{
-			if ((i == 0 || !map[i + 1] || j == 0 || !map[i][j + 1])
-				&& map[i][j] != '1')
+			if (is_border_tile(map, i, j) && map[i][j] != '1')
 			{
 				big_big_free(map);
 				put_err("Map is not surrounded by walls", NULL);

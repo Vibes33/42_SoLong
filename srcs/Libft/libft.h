@@ -6,12 +6,12 @@
 /*   By: rydelepi <rydelepi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 15:27:32 by rydelepi          #+#    #+#             */
-/*   Updated: 2025/11/28 16:00:00 by rydelepi         ###   ########.fr       */
+/*   Updated: 2025/11/28 21:31:58 by rydelepi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBFT_H
-#define LIBFT_H
+# define LIBFT_H
 
 # include <stdlib.h>
 # include <unistd.h>
@@ -29,8 +29,8 @@
 
 /*
 ** ft_isalpha - Checks if character is alphabetic (a-z, A-Z)
-** @c      : Character to check (as int)
-** @return : 1 if alphabetic, 0 otherwise
+** @c       Character to check (as int)
+** @return  1 if alphabetic, 0 otherwise
 */
 int				ft_isalpha(int c);
 

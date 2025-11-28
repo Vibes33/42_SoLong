@@ -6,7 +6,7 @@
 /*   By: rydelepi <rydelepi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 13:29:52 by rydelepi          #+#    #+#             */
-/*   Updated: 2025/11/28 13:29:56 by rydelepi         ###   ########.fr       */
+/*   Updated: 2025/11/28 22:51:06 by rydelepi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,20 +62,8 @@ static void	init_map_data(t_data *data, char **map)
 	data->player->dir = RIGHT;
 }
 
-int	main(int argc, char **argv)
+static void	setup_and_run(t_data *data)
 {
-	t_data	*data;
-	char	**map;
-
-	if (argc != 2)
-		put_err("Usage: ./so_long <map.ber>", NULL);
-	data = init_data();
-	if (!data)
-		put_err("Malloc error", NULL);
-	map = get_and_parse(argv[1]);
-	if (!map)
-		put_err("Invalid map", data);
-	init_map_data(data, map);
 	data->mlx = mlx_init();
 	if (!data->mlx)
 		put_err("MLX init failed", data);
@@ -89,5 +77,22 @@ int	main(int argc, char **argv)
 	mlx_key_hook(data->win, &input, data);
 	mlx_hook(data->win, 17, 1L << 17, &kill_prog, data);
 	mlx_loop(data->mlx);
+}
+
+int	main(int argc, char **argv)
+{
+	t_data	*data;
+	char	**map;
+
+	if (argc != 2)
+		put_err("Usage: ./so_long <map.ber>", NULL);
+	data = init_data();
+	if (! data)
+		put_err("Malloc error", NULL);
+	map = get_and_parse(argv[1]);
+	if (!map)
+		put_err("Invalid map", data);
+	init_map_data(data, map);
+	setup_and_run(data);
 	return (0);
 }
