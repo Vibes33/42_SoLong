@@ -6,7 +6,7 @@
 /*   By: rydelepi <rydelepi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 16:00:04 by rydelepi          #+#    #+#             */
-/*   Updated: 2025/11/28 21:47:30 by rydelepi         ###   ########.fr       */
+/*   Updated: 2025/12/01 11:11:09 by rydelepi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,30 +90,30 @@ static char	**get_map(char *file_name)
 
 static void	border_check(char **map)
 {
-	int		i;
-	int		j;
-	size_t	first_len;
+	int	i;
+	int	j;
+	int	err;
 
-	if (!map || !map[0])
-		put_err("Empty map", NULL);
-	first_len = ft_strlen(map[0]);
+	err = 0;
 	i = -1;
 	while (map[++i])
 	{
-		if (ft_strlen(map[i]) != first_len)
+		if (i == 0 || !map[i + 1])
 		{
-			big_big_free(map);
-			put_err("Map is not rectangular", NULL);
+			j = 0;
+			while (map[i][j])
+				if (map[i][j++] != '1' || j >= 40 || i >= 22)
+					err = 1;
 		}
-		j = -1;
-		while (map[i][++j])
-		{
-			if (is_border_tile(map, i, j) && map[i][j] != '1')
-			{
-				big_big_free(map);
-				put_err("Map is not surrounded by walls", NULL);
-			}
-		}
+		else
+			if (map[i][0] != '1' || map[i][ft_strlen(map[i]) - 1] != '1' ||
+				ft_strlen(map[i]) != ft_strlen(map[i - 1]))
+				err = 1;
+	}
+	if (err || ft_strlen(map[i - 1]) != ft_strlen(map[i - 2]))
+	{
+		big_big_free(map);
+		put_err("Wrong border/map too large/incorrect line sizes", NULL);
 	}
 }
 
