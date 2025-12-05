@@ -3,7 +3,16 @@ NAME = so_long
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -Iincludes -Iminilibx-linux -Isrcs/Libft
 
-SRCS = srcs/main.c srcs/parsing.c srcs/parsing_utils.c srcs/parsing_utils2. c srcs/parsing_utils3.c srcs/utilis.c srcs/free.c srcs/render.c srcs/render_utils.c srcs/movement.c
+SRCS = srcs/main.c \
+	srcs/parsing.c \
+	srcs/parsing_utils.c \
+	srcs/parsing_utils2.c \
+	srcs/parsing_utils3.c \
+	srcs/utilis.c \
+	srcs/free.c \
+	srcs/render.c \
+	srcs/render_utils.c \
+	srcs/movement.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -19,6 +28,9 @@ all: $(NAME)
 
 $(NAME): $(LIBFT) $(MLX) $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX) $(LDFLAGS) -o $(NAME)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(MLX):
 	make -C $(MLX_DIR)
@@ -36,4 +48,4 @@ fclean: clean
 
 re: fclean all
 
-. PHONY: all clean fclean re
+.PHONY: all clean fclean re

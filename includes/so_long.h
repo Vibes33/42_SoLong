@@ -35,12 +35,12 @@
 # define KEY_RIGHT 65363
 # define NAME "Soooooooooooooooooooooooooooooooooooooooooooo long"
 # define TILE_SIZE 48
-# define SPRITE_FLOOR "../sprites/grass.xpm"
-# define SPRITE_WALL "../sprites/obstacle.xpm"
-# define SPRITE_COLL "../sprites/collect.xpm"
-# define SPRITE_EXIT "../sprites/end.xpm"
-# define SPRITE_PLAYER_R "../sprites/player1.xpm"
-# define SPRITE_PLAYER_L "../sprites/player2.xpm"
+# define SPRITE_FLOOR "sprites/grass.xpm"
+# define SPRITE_WALL "sprites/obstacle.xpm"
+# define SPRITE_COLL "sprites/collect.xpm"
+# define SPRITE_EXIT "sprites/end.xpm"
+# define SPRITE_PLAYER_R "sprites/player1.xpm"
+# define SPRITE_PLAYER_L "sprites/player2.xpm"
 
 /*
 ** enum direction
